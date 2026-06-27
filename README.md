@@ -216,24 +216,3 @@ python main.py
 
 Output results can be merged with HI distances for downstream antigenic mapping.
 
-## Output Locations
-
-- training logs: `log/<date>/...`
-- cross-validation outputs and metrics: `result/joblib/...`
-- importance scores: `result/importance/...`
-- inference results: `download_ret/*_results.csv`
-- figure outputs: `result/figure/...`
-
-## Troubleshooting
-
-### `unrecognized arguments: --epoch`
-
-Use `--epochs` instead.
-
-### `--test_file` is ignored in test mode
-
-The current test branch of `main.py` reads fixed files under `download_ret/<subtype>_with_seq.csv`. The `--test_file` argument is not actively used.
-
-### Logs do not appear in the terminal
-
-Logs are written to files under `log/` by design, and console output is disabled in the current implementation.
