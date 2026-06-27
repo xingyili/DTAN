@@ -1,0 +1,13 @@
+--extra-index-url https://download.pytorch.org/whl/cu113
+
+biopython==1.84
+joblib==1.4.2
+numpy==1.26.1
+pandas==2.2.2
+scikit-learn==1.7.0
+scipy==1.15.3
+torch==1.11.0+cu113
+tqdm==4.66.1
+xgboost==2.0.3
+loguru
+aaindex
