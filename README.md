@@ -1,6 +1,14 @@
 # DTAN
 
-DTAN is a research codebase for influenza antigenic distance prediction across the H1, H3, and H5 subtypes.
+DTAN is a bi-encoder Transformer framework for accurate antigenic prediction of influenza A viruses.
+
+The overall framework of DTAN is shown below.
+
+
+
+<img width="1525" height="1168" alt="dtan_framework" src="https://github.com/user-attachments/assets/cb9c1079-c3bf-4d3c-9273-e10735798a87" />
+
+
 
 The current repository supports four major tasks:
 - reproduction of DTAN and ablation experiments for three subtypes
@@ -14,11 +22,7 @@ Commonly used files and directories:
 
 - `main.py`: main entry point for training, validation, and testing
 - `main_time.py`: entry point for runtime comparison
-- `run.sh`: batch commands for multiple subtype and model settings
-- `run_time.sh`: batch commands for runtime comparison
-- `run_test.sh`: inference script
 - `src/`: core code for data handling, feature extraction, training, evaluation, and importance analysis
-- `data/dataset0722/`: training and evaluation data
 - `result/joblib/`: cross-validation outputs used for plotting
 - `result/importance/`: exported attention or importance scores
 - `saved_models/`: model weights and encoders for inference
@@ -98,9 +102,7 @@ After the run:
 
 ## Reproducing DTAN and Ablations
 
-The recommended entry point is `run.sh`.
-
-General template:
+Run `main.py` to train DTAN or one of its ablation variants:
 
 ```bash
 python main.py \
@@ -129,16 +131,28 @@ Typical settings:
 
 ## Runtime Comparison
 
-Run:
+Run `main_time.py` to compare the runtime of DTAN and NoDAE under different training-data fractions:
 
 ```bash
-sh run_time.sh
+python main.py \
+  --seq_path <HA_csv> \
+  --anti_path <HI_csv> \
+  --subtype <H1|H3|H5> \
+  --label NHT_distance \
+  --valid_type titer \
+  --n_jobs 30 \
+  --low <ae|none> \
+  --ae_dim 64 \
+  --epoch <20|300> \
+  --model full \
+  --percentage <0.33333333|0.66666666|1.0> \
+  --im_lambda <3e-5|5e-5> \
+  --im_epoch <10|25> \
+  --device <cuda:x>
 ```
 
 Notes:
-- the comparison entry point is `main_time.py`
 - the key parameter is `--percentage`, for example `0.33333333`, `0.66666666`, or `1.0`
-- `run_time.sh` covers DTAN (`low=ae`) and NoDAE (`low=none`) under multiple data fractions
 
 ## Site-Importance Analysis
 
@@ -183,14 +197,24 @@ Each input file should contain:
 ### Run inference
 
 ```bash
-sh run_test.sh
+python main.py
+--seq_path <HA_csv>
+--anti_path <HI_csv>
+--subtype <H1|H3>
+--label NHT_distance
+--valid_type test
+--n_jobs 30
+--low ae
+--ae_dim 64
+--epoch 20
+--model full
+--im_lambda 3e-5
+--im_epoch 10
+--device cuda:x
+--test_file <H1_results.csv|H3_results.csv>
 ```
 
-Output files:
-- `download_ret/H1_results.csv`
-- `download_ret/H3_results.csv`
-
-These results can be merged with HI distances for downstream antigenic mapping.
+Output results can be merged with HI distances for downstream antigenic mapping.
 
 ## Output Locations
 
